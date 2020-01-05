@@ -1,16 +1,18 @@
 import tushare as ts
 import pandas as pd
 import os
+import numpy as np
 import time
+from tqdm import tqdm
 
 """
 获取历史数据
 """
 
-mytoken = '10a361cde441a9e7aea6e98441a8bea0fbb2c82ac8298899ee22fbfd'
+mytoken = '20619ac618ef9b20b6d47da6092319ae6a4bbe529eeaa522bf0e070d'
 ts.set_token(mytoken)
 ts.set_token(mytoken)
-save_path = 'F:\stock'
+save_path = 'stock'
 pro = ts.pro_api()
 
 
@@ -33,15 +35,134 @@ def getNoramlData():
         #接口限制访问200次/分钟，加一点微小的延时防止被ban
         path = os.path.join(save_path, 'OldData', i + '_NormalData.csv')
         j += 1
+
+        time.sleep(0.301)
+        df = ts.pro_bar(ts_code=i, adj='qfq', start_date=startdate, end_date=enddate,
+                        ma=[5, 10, 13, 21, 30, 60, 120], factors=['tor', 'vr'])
+        try:
+            df = df.sort_values('trade_date', ascending=True)
+            df.to_csv(path, index=False)
+        except:
+            print(i)
+
+
+def getLimitData():
+    #获取基础信息数据，包括股票代码、名称、上市日期、退市日期等
+    pool = pro.stock_basic(exchange='',
+                           list_status='L',
+                           adj='qfq',
+                           fields='ts_code,symbol,name,area,industry,fullname,list_date, market,exchange,is_hs')
+    #print(pool.head())
+
+    # 因为穷没开通创业板和科创板权限，这里只考虑主板和中心板
+    pool = pool[pool['market'].isin(['主板', '中小板'])].reset_index()
+    # pool.to_csv(os.path.join(save_path, 'company_info.csv'), index=False, encoding='ANSI')
+
+    print('获得上市股票总数：', len(pool)-1)
+    j = 1
+    for i in pool.ts_code:
+        print('正在获取第%d家，股票代码%s.' % (j, i))
+        #接口限制访问200次/分钟，加一点微小的延时防止被ban
+        path = os.path.join(save_path, 'LimitData', i + '.csv')
+        j += 1
         # if os.path.exists(path):
         #     continue
         time.sleep(0.301)
-        df = pro.daily(ts_code=i,
+        df = pro.stk_limit(ts_code=i,
+                           adj='qfq',
                        start_date=startdate,
-                       end_date=enddate,
-                       fields='ts_code, trade_date, open, high, low, close, pre_close, change, pct_chg, vol, amount')
+                       end_date=enddate)
         df = df.sort_values('trade_date', ascending=True)
         df.to_csv(path, index=False)
+
+    # df = pro.limit_list(start_date=startdate, end_date=enddate)
+    # path = os.path.join(save_path, 'LimitData', 'all.csv')
+    # df.to_csv(path, index=False)
+
+    # df = pro.limit_list(start_date=startdate, end_date=enddate)
+    # path = os.path.join(save_path, 'LimitData', 'all.csv')
+    # df.to_csv(path, index=False)
+
+
+# 获得个股资金流向（大单 小单 等）
+def getMoneyData():
+    pool = pro.stock_basic(exchange='',
+                           list_status='L',
+                           adj='qfq',
+                           fields='ts_code,symbol,name,area,industry,fullname,list_date, market,exchange,is_hs')
+    pool = pool[pool['market'].isin(['主板', '中小板'])].reset_index()
+    print('获得上市股票总数：', len(pool)-1)
+    j = 1
+    for i in pool.ts_code:
+        print('正在获取第%d家，股票代码%s.' % (j, i))
+        path = os.path.join(save_path, 'MoneyData', i + '.csv')
+        j += 1
+        time.sleep(0.101)
+        df = pro.moneyflow(ts_code=i, start_date=startdate, end_date=enddate)
+        df.to_csv(path, index=False)
+
+
+def getOtherData():
+    index_df = pd.read_csv(os.path.join(save_path, 'OldData', '000001.SH' + '_NormalData.csv'))
+
+    day = np.sort(list(index_df['trade_date']))
+
+    #  统计涨跌停股票
+    for tmp_day in tqdm(day):
+        df = pro.limit_list(trade_date=str(tmp_day))
+        path = os.path.join(save_path, 'OhterData', 'limit_list_' + str(tmp_day) + '.csv')
+        time.sleep(0.601)
+        if len(df) == 0:
+            continue
+
+        df.to_csv(path, index=False)
+
+    # 获取沪深港通资金流向
+    df_all = pd.DataFrame()
+    skip = 200
+    for i in range(0, len(day), skip):  # 每次最多返回300条
+        sd = str(day[i])
+        if i + skip-1 > len(day):
+            ed = str(day[-1])
+        else:
+            ed = str(day[i+skip-1])
+        df = pro.moneyflow_hsgt(start_date=sd, end_date=ed)
+        time.sleep(0.5)
+        df_all = pd.concat((df_all, df))
+    path = os.path.join(save_path, 'OhterData', 'moneyflow_hsgt' + '.csv')
+    df_all.to_csv(path, index=False)
+
+    # 港股通每日成交
+    df_all = pd.DataFrame()
+    skip = 900
+    for i in range(0, len(day), skip):  # 每次最多返回1000条
+        sd = str(day[i])
+        if i + skip-1 > len(day):
+            ed = str(day[-1])
+        else:
+            ed = str(day[i+skip-1])
+        df = pro.ggt_daily(start_date=sd, end_date=ed)
+        time.sleep(60)
+        df_all = pd.concat((df_all, df))
+    path = os.path.join(save_path, 'OhterData', 'ggt_daily' + '.csv')
+    df_all.to_csv(path, index=False)
+
+    # 港股通每月成交
+    # df_all = pd.DataFrame()
+    # skip = 800
+    # for i in range(0, len(day), skip):  # 每次最多返回300条
+    #     sd = day[i]
+    #     if i + skip-1 > len(day):
+    #         ed = day[-1]
+    #     else:
+    #         ed = day[i+skip-1]
+    #     df = pro.ggt_daily(start_date=sd, end_date=ed)
+    #     df_all = pd.concat((df_all, df))
+    # path = os.path.join(save_path, 'OhterData', 'ggt_monthly' + '.csv')
+    # df_all.to_csv(path, index=False)
+
+    # 沪深股通持股明细
+    # 待定
 
 
 def getIndexData():
@@ -68,10 +189,13 @@ def getIndexData():
         df.to_csv(path, index=False)
 
 
+
 if __name__ == '__main__':
     #设置起始日期
     startdate = '20120101'
     enddate = '20191226'
     #主程序
-    getNoramlData()
-    getIndexData()
+    # getNoramlData()
+    # getIndexData()
+    # getLimitData()
+    getOtherData()
