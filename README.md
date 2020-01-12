@@ -8,7 +8,15 @@ RefreshData.py:股票数据更新
 
 Draw.py: 绘图程序，绘制股票涨跌图等
 
-Train.ipyn: 训练模型及回测程序
+短期选股策略1.ipyn: 训练模型及回测程序，具体可以看 （公众号第三篇文章）
+
+https://mp.weixin.qq.com/s?__biz=MzIyNjg5MTAzOA==&tempkey=MTA0M18xZ0xXUDNXNEFvbGUvdW9pX0RNN1ZLV0tiZE1Zc2xOT3ZjaHA2RzdtWDBJak9RLW0xampvZGJtWUdQbTROUlp5VzE1aUdDOTdvMGJvSUNBRkNFTmh6enFIaHMyYXo5M2JVVUFKbUt2eVdQa0l1N2Itc3phZmNid3JWWWxKWkdWMEFQZHBxNTFPaFhoSW42U1lYZ2xhLXhpMFF6bkV2OTZxUGM5VmpBfn4%3D&chksm=6868c56d5f1f4c7b9ae3cc18ad9cc0efcd8dec5526c063f6c97d30200685155ab6d0ed9684b4#rd 
+
+
+短期选股策略2.ipyn: 训练模型及回测程序，具体可以看 （公众号第五篇文章）
+
+https://mp.weixin.qq.com/s?__biz=MzIyNjg5MTAzOA==&mid=2247483706&idx=1&sn=1b10768665edb191b55da8992267d8b2&chksm=e868c54bdf1f4c5d6121a398069db0bf2c0de77d1e1aee4d9c20aea208f51ce8d66714ef5a40&token=952490994&lang=zh_CN#rd
+
 
 如果对个人在量化上的研究感兴趣可以关注个人公众号（公众号上有个人对代码的讲解）,不定期分享一些研究情况.后期策略成熟会分享一些股票.
 公众号:Gambler_Evolution
