@@ -9,7 +9,7 @@ from tqdm import tqdm
 获取历史数据
 """
 
-mytoken = '20619ac618ef9b20b6d47da6092319ae6a4bbe529eeaa522bf0e070d'
+mytoken = '0c244f0bd57ffc8430b6801be8d9a9e2db2a7e68b31a36db87983990'
 ts.set_token(mytoken)
 ts.set_token(mytoken)
 save_path = 'stock'
@@ -195,7 +195,8 @@ if __name__ == '__main__':
     startdate = '20120101'
     enddate = '20191226'
     #主程序
-    # getNoramlData()
-    # getIndexData()
-    # getLimitData()
+    getNoramlData()
+    getIndexData()
+    getLimitData()
     getOtherData()
+    getMoneyData()
