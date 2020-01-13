@@ -4,6 +4,8 @@ Account.py:账户类用于回测使用
 
 DataDowload.py:股票数据下载
 
+CountLimit.py:统计每日涨停数与跌停数，并存入limit.csv中
+
 RefreshData.py:股票数据更新
 
 Draw.py: 绘图程序，绘制股票涨跌图等
