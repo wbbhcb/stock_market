@@ -42,7 +42,7 @@ DataDowload.py->短期选股策略1.ipynb
 DataDowload.py->CountLimit.py->短期选股策略2.ipynb
 
 中线股选股策略1：
-DataDowload.py->CountLimit.py->MakeLabel.py->短期选股策略2.ipynb
+DataDowload.py->CountLimit.py->MakeLabel.py->中线股选股策略1.ipynb
 
 # 结语
 如果觉得代码帮助很大，希望给个星，谢谢支持！！！
