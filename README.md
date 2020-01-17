@@ -49,7 +49,7 @@ DataDowload.py->CountLimit.py->MakeLabel.py->短期选股策略2.ipynb
 
 如果对个人在量化上的研究感兴趣可以关注个人公众号（公众号上有个人对代码的讲解）,不定期分享一些研究情况.后期策略成熟会分享一些股票.
 
-公众号:==**Gambler_Evolution**==
+公众号:**Gambler_Evolution**
 
  ![image](https://github.com/wbbhcb/stock_market/blob/master/qrcode.jpg)
 
