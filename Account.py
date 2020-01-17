@@ -3,7 +3,8 @@ import pandas as pd
 
 class Account:
 
-    def __init__(self, money_init, start_date='', end_date='', max_hold_period=5):
+    def __init__(self, money_init, start_date='', end_date='', stop_loss_rate=-0.03, stop_profit_rate=0.05,
+                 max_hold_period=5):
         self.cash = money_init  # 现金
         self.stock_value = 0  # 股票价值
         self.market_value = money_init  # 总市值
@@ -27,8 +28,8 @@ class Account:
         self.cost = []  # 记录真实花费
         # self.profit = []  # 记录每次卖出股票收益
 
-        self.stop_loss_rate = -0.03  # 止损比例
-        self.stop_profit_rate = 0.05  # 止盈比例
+        self.stop_loss_rate = stop_loss_rate  # 止损比例
+        self.stop_profit_rate = stop_profit_rate  # 止盈比例
 
         self.victory = 0  # 记录交易胜利次数
         self.defeat = 0  # 记录失败次数
@@ -38,7 +39,7 @@ class Account:
         self.market_value_all = [money_init]  # 记录每天收盘后的总市值
         self.max_market_value = money_init  # 记录最大的市值情况，用来计算回撤
         self.min_after_max_makret_value = money_init  # 记录最大市值后的最小市值
-        self.max_retracement = 0  #记录最大回撤概率
+        self.max_retracement = 0  #记录最大回撤率
         self.info = pd.DataFrame(columns=['ts_code', 'name', 'buy_price', 'buy_date', 'buy_num', 'sell_price', 'sell_date',
                                           'profit'])
 
@@ -110,7 +111,7 @@ class Account:
         idx = self.stock_id.index(stock_id)
 
         tmp_money = sell_num * sell_price
-        service_change = tmp_money * self.buy_rate
+        service_change = tmp_money * self.sell_rate
         if service_change < self.sell_min:
             service_change = self.sell_min
         stamp_duty = self.stamp_duty * tmp_money
@@ -243,7 +244,7 @@ class Account:
                 if retracement > self.max_retracement:
                     self.max_retracement = retracement
 
-    def BackTest(self, buy_df, all_df, index_df):
+    def BackTest(self, buy_df, all_df, index_df, buy_price='close'):
         """
         :param buy_df: 可以买入的股票，输入为DataFrame
         :param all_df: 所有股票的DataFrame
@@ -270,14 +271,16 @@ class Account:
                     # print(tmp_df)
                     # print(tmp_df['close'])
 
-                    buy_num = (money / tmp_df['close'][j]) // 100
+                    buy_num = (money / tmp_df[buy_price][j]) // 100
                     if buy_num == 0:
                         continue
                     buy_num = buy_num * 100
                     self.buy_stock(day, tmp_df['name'][j],
-                                   tmp_df['ts_code'][j], tmp_df['close'][j], buy_num)
+                                   tmp_df['ts_code'][j], tmp_df[buy_price][j], buy_num)
 
             # ----卖股
+            # import datetime
+            # start = datetime.datetime.now()
             for j in range(len(self.stock_id) - 1, -1, -1):
                 if self.buy_date[j] == day:
                     continue
@@ -291,6 +294,8 @@ class Account:
 
             # 更新持股周期及信息
             self.update(day, all_df)
+            # end = datetime.datetime.now()
+            # print('running time:%s'%(end-start))
 
         # self.info['buy_date'] = self.info['buy_date'].apply(lambda x: int(x))
         # self.info['sell_date'] = self.info['sell_date'].apply(lambda x: int(x))
