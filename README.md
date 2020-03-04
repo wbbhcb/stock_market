@@ -31,6 +31,10 @@ https://mp.weixin.qq.com/s/drVANZjUhtltD9rsFNb0ZA
 
 https://mp.weixin.qq.com/s/L0p2Z71vorV39qSucQIlFg
 
+超级简单的仓位设置策略.ipynb：超级简单的仓位设置策略，具体可以看
+
+https://mp.weixin.qq.com/s/WOpFs5Tkd7RP0sIZq1JEmg
+
 **其他代码**
 
 Draw.py: 绘图程序，绘制股票涨跌图等
