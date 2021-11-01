@@ -31,8 +31,8 @@ def getNoramlData():
     j = 0
     for i in pool.ts_code:
         j += 1
-        if j <=303:
-            continue
+        #if j <=303:
+        #    continue
         print('正在获取第%d家，股票代码%s.' % (j, i))
         #接口限制访问200次/分钟，加一点微小的延时防止被ban
         path = os.path.join(save_path, i + '_NormalData.csv')
