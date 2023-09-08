@@ -63,5 +63,4 @@ DataDowload.py->CountLimit.py->MakeLabel.py->中线股选股策略1.ipynb
 
  ![image](https://github.com/wbbhcb/stock_market/blob/master/qrcode.jpg)
 
-个人知乎:https://www.zhihu.com/people/e-zhe-shi-wo/activities
 
